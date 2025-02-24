@@ -7,13 +7,10 @@
 
 package frc.robot.commands;
 
-import org.opencv.core.Mat;
-
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Robot;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Limelight;
@@ -72,7 +69,7 @@ public class NavXSeeker extends Command {
         switch(stage){
             case 1 : 
                 //Uses the limelight to align itself and move towards the goal
-                Scheduler.getInstance().add(kSeekVisionTarget);
+                CommandScheduler.getInstance().schedule(kSeekVisionTarget);
                 if(kSeekVisionTarget.isFinished()){
                     stage ++;   
                 } 

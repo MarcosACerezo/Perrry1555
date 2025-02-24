@@ -5,6 +5,13 @@ public class Constants {
         public static int leftDriveIndex = 0;
         public static int rightDriveIndex = 1;
     }
+
+    public class Shooter{
+        public static int topLimitSwitch = 0;
+        public static int botLimitSwitch = 1;
+        public static int shooterLiftIndex = 2;
+        public static int shooterIndex = 7;
+    }
 }
 
 
@@ -14,4 +21,7 @@ public class Constants {
 // 	int CPILiftIndex = 5;
 // 	int CPISpinnerIndex = 6;
 // 	int ShooterIndex = 7;
+
+
+
 

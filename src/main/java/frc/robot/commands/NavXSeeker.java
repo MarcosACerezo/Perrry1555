@@ -10,10 +10,14 @@ package frc.robot.commands;
 import org.opencv.core.Mat;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.NavX;
 
 
 
@@ -21,19 +25,28 @@ import frc.robot.Robot;
  * An example command.  You can replace me with your own command.
  */
 public class NavXSeeker extends Command {
+    //necessary subsystems
+    private NavX m_navX;
+    private DriveTrain m_driveTrain;
+    private Shooter m_shooter;
+    private Limelight m_limelight;
+
+    public NavXSeeker(NavX navX, DriveTrain driveTrain, Shooter shooter, Limelight limelight) {
+        m_navX = navX;
+        m_driveTrain = driveTrain;
+        m_shooter = shooter;
+        m_limelight = limelight;
+        addRequirements(m_navX, m_driveTrain, m_shooter, limelight);
+    }
 
     //This value will hold the value for the angle that was last recorded before the limelight was not within distance of the target
     public double lastRecorded0;
-
     //default speed for the motors
     public final double kdrivespeed = 0.2;
-    
     //speeds for the motors as they are pushing up against the wall
     final double crashspeed = 0.4;
-
     //Keeps track of what stage the command is in
     public int stage;
-
     //timer for the robot to give it time to push up against the wall
     public Timer time
     = new Timer();
@@ -41,48 +54,44 @@ public class NavXSeeker extends Command {
     //The command we will be using for aligning with the target
     public static SeekVisionTarget kSeekVisionTarget;
 
-	public NavXSeeker() {
-    //requires(Robot.kExampleSubsystem);
-		requires(Robot.kNavX);
-	}
+	
 
 	// Called just before this Command runs the first time
 	@Override
-	protected void initialize() {
-        kSeekVisionTarget = new SeekVisionTarget();
+	public void initialize() {
+        kSeekVisionTarget = new SeekVisionTarget(m_driveTrain, m_limelight);
         stage = 1;
     }
    
 	// Called repeatedly when this Command is scheduled to run
 	@Override
-	protected void execute() {
+	public void execute() {
         //Sets the arm to move up
-        Robot.kShooter.armPositionUp = true;
-        
+        m_shooter.setArmPosition(true);
         //Runs through the different steps for scoring
         switch(stage){
             case 1 : 
                 //Uses the limelight to align itself and move towards the goal
                 Scheduler.getInstance().add(kSeekVisionTarget);
-                if(kSeekVisionTarget.isCompleted()){
+                if(kSeekVisionTarget.isFinished()){
                     stage ++;   
                 } 
                 break; 
             case 2 :
                 //Records the angle of the target relative to the robot.
-                lastRecorded0 = Robot.kLimelight.getLimeX() + Robot.kNavX.getYaw();
+                lastRecorded0 = m_limelight.getLimeX() + m_navX.getYaw();
                 stage ++;
                 break;
             case 3 : 
                 //Waits for the limit switch to be pressed
-                if (!Robot.map.lswitchTop.get()) {
+                if (m_shooter.topLimSwitchPressed()) {
                     stage++;
                 }
                 break;
             case 4 :
                 //Drives toward the target
-                Robot.Drive.driveAtAngle(kdrivespeed, lastRecorded0);
-                if(Robot.hasCrashed){
+                m_driveTrain.driveAtAngle(kdrivespeed, lastRecorded0, m_navX);
+                if(m_navX.hasCrashed()){
                     stage++;
                     //Prepares the timer for the next step
                     time.reset();
@@ -91,9 +100,9 @@ public class NavXSeeker extends Command {
                 break;
             case 5 :
                 //Runs until the robot crashes into the wall
-                Robot.Drive.driveTank(crashspeed, crashspeed);
+                m_driveTrain.driveTank(crashspeed, crashspeed);
                 if(time.get() > 2){
-                    Robot.Drive.stop();
+                    m_driveTrain.stop();
                     stage++;
                 }
                 break;
@@ -104,23 +113,23 @@ public class NavXSeeker extends Command {
                 break;
             case 7 :
                 //Shoots the power cells into the goal
-                Robot.kShooter.shoot();
+                m_shooter.shoot();
                 if(time.get() > 1.5){
-                    Robot.kShooter.Stop();
+                    m_shooter.stop();
                     stage++;
                 }
                 break;
             default:
                 //Stops the robot
-                Robot.Drive.stop();
-                Robot.kShooter.Stop();
+                m_driveTrain.stop();
+                m_shooter.stop();
             }
 
             SmartDashboard.putNumber("Stage: ", stage);
     }
     // Make this return true when this Command no longer needs to run execute()
 	@Override
-	protected boolean isFinished() {
+	public boolean isFinished() {
         if(stage == 8){
             return true;
         }
@@ -129,14 +138,8 @@ public class NavXSeeker extends Command {
 
 	// Called once after isFinished returns true
 	@Override
-	protected void end() {
-        Robot.Drive.stop();
-        Robot.kShooter.Stop();
-	}
-
-	// Called when another command which requires one or more of the same
-	// subsystems is scheduled to run
-	@Override
-	protected void interrupted() {
+	public void end(boolean interrupted) {
+        m_driveTrain.stop();
+        m_shooter.stop();
 	}
 }

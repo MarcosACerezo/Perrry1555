@@ -5,7 +5,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
-public class limelight extends SubsystemBase {
+public class Limelight extends SubsystemBase {
 
 	static NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
 	static NetworkTableEntry tx = table.getEntry("tx");

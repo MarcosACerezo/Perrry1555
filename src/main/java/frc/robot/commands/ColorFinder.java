@@ -9,15 +9,21 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Robot;
+import frc.robot.subsystems.CPI;
+import frc.robot.subsystems.ColorSensor;
 
 /**
  * An example command.  You can replace me with your own command.
  */
 public class ColorFinder extends Command {
-	public ColorFinder() {
+	private CPI m_cpi;
+	private ColorSensor m_colorSensor;
+	
+	public ColorFinder(CPI cpi, ColorSensor colorSensor) {
 		// Use requires() here to declare subsystem dependencies
-		requires(Robot.kColorSensor);
+		this.m_cpi = cpi;
+		this.m_colorSensor = colorSensor;
+		addRequirements(m_colorSensor, m_cpi);
     }
 
 	public String colorTargetValue;
@@ -35,13 +41,13 @@ public class ColorFinder extends Command {
     //for this function put it to a button and then make the program run based off of what the button is returning
 	public void execute() {
 		if ((lastColor == "Unknown") || (lastColor == null)) {
-			lastColor = Robot.kColorSensor.RobotColorDetector();
+			lastColor = m_colorSensor.RobotColorDetector();
 			return;
 		}
 
-		Robot.map.CPISpinner.set(0.2);
-		colorFound = Robot.kColorSensor.RobotColorDetector();
-		if (colorFound == Robot.kColorSensor.nextColorClockwise(lastColor)) {
+		m_cpi.setSpeed(0.2);
+		colorFound = m_colorSensor.RobotColorDetector();
+		if (colorFound == m_colorSensor.nextColorClockwise(lastColor)) {
 			lastColor = colorFound;
 		}
 		System.out.println("Searching for " + colorTargetValue);
@@ -64,7 +70,7 @@ public class ColorFinder extends Command {
 	// Called once after isFinished returns true
 	@Override
 	public void end(boolean interrupted) {
-        Robot.map.CPISpinner.set(0);
+        m_cpi.setSpeed(0);
 	}
 
 }

@@ -7,67 +7,57 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.Talon;
-import edu.wpi.first.wpilibj.command.Command;
-import frc.robot.Robot;
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.CPI;
+import frc.robot.subsystems.ColorSensor;
 
-/**
- * An example command.  You can replace me with your own command.
- */
 public class RotationControl extends Command {
-    //
-	String startColor; 
-	//
-	String Color2;
-
-	public String lastColor;
-
-	Talon spinner;
-		
-	//
+	//necessary subsystems
+	private ColorSensor m_colorSensor;
+	private CPI m_cpi;
+	//start color used to know when a full rotation is completed
+	String currentColor;
+	String lastColor;
 	boolean Flag;
-	//
 	int Ticks;
     
-    public RotationControl() {
-		// Use requires() here to declare subsystem dependencies
-		requires(Robot.kColorSensor);
+    public RotationControl(ColorSensor colorSensor, CPI cpi) {
+		this.m_colorSensor = colorSensor;
+		this.m_cpi = cpi;
+		addRequirements(m_colorSensor, m_cpi);
 	}
 
 	// Called just before this Command runs the first time
 	@Override
-	protected void initialize() {
+	public void initialize() {
 		lastColor = "Unknown";
 		Flag = true;
 		Ticks = 0;
-		spinner = Robot.map.CPISpinner;
 	}
 
 	// Called repeatedly when this Command is scheduled to run
 	@Override
-	protected void execute() {
+	public void execute() {
 		// Spin for 4 rotations
         // Store the current color
-		if (lastColor == "Unknown") {
-			lastColor = Robot.kColorSensor.RobotColorDetector();
+		if (lastColor.equals("Unknown")) {
+			lastColor = m_colorSensor.RobotColorDetector();
 			return;
 		}
-		spinner.set(0.2);
+		m_cpi.setSpeed(0.2);
 
 		// Check for a color change
-		
-		Color2 = Robot.kColorSensor.RobotColorDetector();
-		
-		if (Color2 == Robot.kColorSensor.nextColorClockwise(lastColor)) {
+		currentColor = m_colorSensor.RobotColorDetector();
+
+		if (currentColor == m_colorSensor.nextColorClockwise(lastColor)) {
 			Ticks += 1;
-			lastColor = Color2;
+			lastColor = currentColor;
 		}
-		System.out.println(Ticks);
 	}
 
 	// Make this return true when this Command no longer needs to run execute()
 	@Override
-	protected boolean isFinished() {
+	public boolean isFinished() {
 		if (Ticks == 32) {
 			return true;
 		}
@@ -78,15 +68,7 @@ public class RotationControl extends Command {
 
 	// Called once after isFinished returns true
 	@Override
-	protected void end() {
-		spinner.set(0);
+	public void end(boolean interrupted) {
+		m_cpi.setSpeed(0);
 	}
-
-	// Called when another command which requires one or more of the same
-	// subsystems is scheduled to run
-	@Override
-	protected void interrupted() {
-	}
-
-	
 }

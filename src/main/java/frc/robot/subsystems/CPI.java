@@ -33,4 +33,7 @@ public class CPI extends SubsystemBase {
     public  void Reverse() {
         spin.set(-1);
     }
+    public void setSpeed(double speed){
+        spin.set(speed);
+    }
 }

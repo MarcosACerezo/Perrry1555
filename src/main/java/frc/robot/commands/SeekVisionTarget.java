@@ -7,21 +7,22 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-import java.beans.PropertyChangeListener;
-
-import frc.robot.Robot;
-import frc.robot.OI.driveButtons;
+import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.Limelight;
 
 /**
  * An example command.  You can replace me with your own command.
  */
 public class SeekVisionTarget extends Command {
-	public SeekVisionTarget() {
-		// Use requires() here to declare subsystem dependencies
-		requires(Robot.kLimelight);
+	private Limelight m_limelight;
+	private DriveTrain m_driveTrain;
+
+	public SeekVisionTarget(DriveTrain driveTrain, Limelight limelight) {
+		m_driveTrain = driveTrain;
+		m_limelight = limelight;
+		addRequirements(m_driveTrain, m_limelight);
 	}
 	
 	//Doubles to hold the margin of error for distance and angle
@@ -58,13 +59,13 @@ public class SeekVisionTarget extends Command {
 
 	// Called just before this Command runs the first time
 	@Override
-	protected void initialize() {
+	public void initialize() {
 	//Sets the starting values for variables
 	xError = 0;
 	zError = 0;
 	steeringAdjust = 0;
 	pole = 1;
-	Robot.kLimelight.setPipe(1);
+	m_limelight.setPipe(1);
 
 	System.out.println("Inititalized");
 
@@ -72,19 +73,19 @@ public class SeekVisionTarget extends Command {
 
 	// Called repeatedly when this Command is scheduled to run
 	@Override
-	protected void execute() {
+	public void execute() {
 
         //Checks for a target
-		if (Robot.kLimelight.targetVisible()) {
+		if (m_limelight.targetVisible()) {
 			
 			//Checks the error of the angle
-			xError = Robot.kLimelight.getLimeX();
+			xError = m_limelight.getLimeX();
 			pole = xError/Math.abs(xError);
 			if (Math.abs(xError) < xToleranceThreshold) {
 				xError = 0;
 			}
 			//Checks how far away the target is
-			zError = Robot.kLimelight.distanceByArea();
+			zError = m_limelight.distanceByArea();
 			speedAdjust = zError/distanceConstant;
 			//Determines steering adjustment based on how far off the angle is
 			steeringAdjust = xError/zError;
@@ -101,18 +102,18 @@ public class SeekVisionTarget extends Command {
 			SmartDashboard.putNumber("zError:", zError);
 			
 			//Drives toward the target
-			Robot.Drive.driveTank(lSpeed, rSpeed);
+			m_driveTrain.driveTank(lSpeed, rSpeed);
 			
 		}
 		//Runs if the limelight can't see a target
 		else {
 			//Turns right if the limelight last saw the target to the right of it's field of view
 			if (pole > 0) {
-				Robot.Drive.driveTank(turnSpeed, -turnSpeed);
+				m_driveTrain.driveTank(turnSpeed, -turnSpeed);
 			}
 			//Turns left if the limelight last saw the target to the left of it's field of view			
 			else {
-				Robot.Drive.driveTank(-turnSpeed, turnSpeed);
+				m_driveTrain.driveTank(-turnSpeed, turnSpeed);
 
 			}
 			
@@ -123,8 +124,9 @@ public class SeekVisionTarget extends Command {
 
 	// Make this return true when this Command no longer needs to run execute()
 	@Override
-	protected boolean isFinished() {
-		if ((Math.abs(zError) < 8) || driveButtons.select.get()) {
+	public boolean isFinished() {
+		//TODO || driveButtons.select.get() implement this in the robotContainer class
+		if ((Math.abs(zError) < 8)) {
 			return true;
 		}
 		return false;
@@ -132,13 +134,7 @@ public class SeekVisionTarget extends Command {
 
 	// Called once after isFinished returns true
 	@Override
-	protected void end() {
-		Robot.Drive.stop();
-	}
-
-	// Called when another command which requires one or more of the same
-	// subsystems is scheduled to run
-	@Override
-	protected void interrupted() {
+	public void end(boolean isFinished) {
+		m_driveTrain.stop();
 	}
 }

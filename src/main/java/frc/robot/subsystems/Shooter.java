@@ -15,7 +15,10 @@ import frc.robot.Constants;
 
 
 public class Shooter extends SubsystemBase {
-	public boolean armPositionUp = false;
+	private boolean armPositionUp = false;
+	//TODO Figure out if limit switches are normally open or normally closed
+	//I believe limit switches are normally closed if they return true when not pressed
+	//they will return true if not pressed, and false if pressed
 	private DigitalInput topLimitSwitch;
 	private DigitalInput botLimitSwitch;
 	private Victor shooter;
@@ -43,15 +46,29 @@ public class Shooter extends SubsystemBase {
 		shooter.set(power);
 		SmartDashboard.putNumber("Shooter power: ", power);
 	}
+	public void setArmPosition(boolean isUp){
+		if(isUp){
+			armPositionUp = true;
+		}else{
+			armPositionUp = false;
+		}
+	}
 
 	public void shoot() {
 		shooterPower(0.7);
 	}
-    public void Stop() {
+    public void stop() {
 		shooterPower(0);
 	}
     public void intake() {
         shooterPower(-0.3);
+	}
+	public boolean topLimSwitchPressed(){
+		if(!topLimitSwitch.get()){
+			return true;
+		}else{
+			return false;
+		}
 	}
 
 	public void moveToPosition() {

@@ -67,27 +67,26 @@ public class DriveTrain extends SubsystemBase {
     	stop();
     }
 
-    //TODO Implement this method 
-    // public void driveAtAngle(double speed, double angle) {
-    //     double error = Robot.kNavX.getYaw() - angle;
-    //     double steeringConstant = 0.1;
-    //     double maxSteeringAdjust = 0.3;
-    //     if (error > 180) {
-    //         error =- 360;
-    //     }
-    //     if (error < -180) {
-    //         error =+ 360;
-    //     }
-    //     double steeringAdjust = error*steeringConstant;
-    //     if (steeringAdjust > maxSteeringAdjust) {
-    //         steeringAdjust = maxSteeringAdjust;
-    //     }
-    //     if (steeringAdjust < -maxSteeringAdjust) {
-    //         steeringAdjust = -maxSteeringAdjust;
-    //     }
+    public void driveAtAngle(double speed, double angle, NavX navX) {
+        double error = navX.getYaw() - angle;
+        double steeringConstant = 0.1;
+        double maxSteeringAdjust = 0.3;
+        if (error > 180) {
+            error =- 360;
+        }
+        if (error < -180) {
+            error =+ 360;
+        }
+        double steeringAdjust = error*steeringConstant;
+        if (steeringAdjust > maxSteeringAdjust) {
+            steeringAdjust = maxSteeringAdjust;
+        }
+        if (steeringAdjust < -maxSteeringAdjust) {
+            steeringAdjust = -maxSteeringAdjust;
+        }
 
-    //     driveTank((speed - steeringAdjust), (speed + steeringAdjust));
-    // }
+        driveTank((speed - steeringAdjust), (speed + steeringAdjust));
+    }
 
     @Override
     public void periodic(){

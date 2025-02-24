@@ -10,8 +10,10 @@ package frc.robot.subsystems;
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
 
-import edu.wpi.first.wpilibj.command.Subsystem;
+
 import edu.wpi.first.wpilibj.util.Color;
+// import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -20,7 +22,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**
  * An example subsystem.  You can replace me with your own Subsystem.
  */
-public class ColorSensor extends Subsystem {
+public class ColorSensor extends SubsystemBase {
 	// Put methods for controlling this subsystem
     // here. Call these from Commands.
     //All of the k(color)Targets need to be calibrated

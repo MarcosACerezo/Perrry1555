@@ -1,21 +1,29 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.Victor;
-import edu.wpi.first.wpilibj.command.Subsystem;
+// import edu.wpi.first.wpilibj.Victor;
+import edu.wpi.first.wpilibj.motorcontrol.Victor;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+// import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Robot;
 
 /**
  *
  */
-public class DriveTrain extends Subsystem {
+public class DriveTrain extends SubsystemBase {
 
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
 
-    //Declaring motors
-    public static Victor L = Robot.map.leftDrive;
-    public static Victor R = Robot.map.rightDrive;
+    //Declaring motors, two motors controlled by one motor controller
+    public static  Victor leftMotors;
+    public static Victor rightMotors;
+
+    public DriveTrain(){
+        leftMotors = new Victor(Constants.DriveTrain.leftDriveIndex);
+        rightMotors = new Victor(Constants.DriveTrain.rightDriveIndex);
+    }
     
     public void initDefaultCommand() {
         // Set the default command for a subsystem here.
@@ -24,29 +32,26 @@ public class DriveTrain extends Subsystem {
     
     //Stops the drive train
     public void stop() {
-    	Robot.map.leftDrive.set(0);
-        Robot.map.rightDrive.set(0);
-        SmartDashboard.putNumber("Left Drive speed: ", 0);
-        SmartDashboard.putNumber("Right Drive speed: ", 0);    }
+    	leftMotors.set(0);
+        rightMotors.set(0);
+    }
     
     //Drives the robot with two separate powers for the wheels
     public void driveTank(double Lspeed, double Rspeed) {
-    	Robot.map.leftDrive.set(Lspeed);
-        Robot.map.rightDrive.set(-Rspeed);
-        SmartDashboard.putNumber("Left Drive speed: ", Lspeed);
-        SmartDashboard.putNumber("Right Drive speed: ", Rspeed);
+    	leftMotors.set(Lspeed);
+        rightMotors.set(-Rspeed);
     }
 
     //Drives the robot as if the front were the back
     public void driveTankInverted(double Lspeed, double Rspeed) {
-    	Robot.map.leftDrive.set(-Rspeed);
-    	Robot.map.rightDrive.set(Lspeed);
+    	leftMotors.set(-Rspeed);
+    	rightMotors.set(Lspeed);
     }
     
     //Drives straight
     public void driveStraight(double speed) {
-    	Robot.map.leftDrive.set(-speed);
-    	Robot.map.rightDrive.set(speed);
+    	leftMotors.set(-speed);
+    	rightMotors.set(speed);
     }
     
     //Function pending
@@ -75,7 +80,6 @@ public class DriveTrain extends Subsystem {
         if (error < -180) {
             error =+ 360;
         }
-
         double steeringAdjust = error*steeringConstant;
         if (steeringAdjust > maxSteeringAdjust) {
             steeringAdjust = maxSteeringAdjust;
@@ -85,6 +89,12 @@ public class DriveTrain extends Subsystem {
         }
 
         driveTank((speed - steeringAdjust), (speed + steeringAdjust));
+    }
+
+    @Override
+    public void periodic(){
+        SmartDashboard.putNumber("Left Drive Speed: ", leftMotors.get());
+        SmartDashboard.putNumber("Right Drive Speed: ", rightMotors.get());
     }
 }
 

@@ -12,14 +12,18 @@ public class Constants {
         public static int shooterLiftIndex = 2;
         public static int shooterIndex = 7;
     }
+
+    public class CPI{
+        public static int CPILiftIndex = 5;
+        public static int CPISpinnerIndex = 6;
+    }
 }
 
 
 // 	int shooterLiftIndex = 2;
 // 	int climberIndex = 3;
 // 	int balancerIndex = 4;
-// 	int CPILiftIndex = 5;
-// 	int CPISpinnerIndex = 6;
+
 // 	int ShooterIndex = 7;
 
 

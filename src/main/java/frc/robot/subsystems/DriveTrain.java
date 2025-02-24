@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 // import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Robot;
 
 /**
  *
@@ -70,26 +69,27 @@ public class DriveTrain extends SubsystemBase {
     	stop();
     }
 
-    public void driveAtAngle(double speed, double angle) {
-        double error = Robot.kNavX.getYaw() - angle;
-        double steeringConstant = 0.1;
-        double maxSteeringAdjust = 0.3;
-        if (error > 180) {
-            error =- 360;
-        }
-        if (error < -180) {
-            error =+ 360;
-        }
-        double steeringAdjust = error*steeringConstant;
-        if (steeringAdjust > maxSteeringAdjust) {
-            steeringAdjust = maxSteeringAdjust;
-        }
-        if (steeringAdjust < -maxSteeringAdjust) {
-            steeringAdjust = -maxSteeringAdjust;
-        }
+    //TODO Implement this method 
+    // public void driveAtAngle(double speed, double angle) {
+    //     double error = Robot.kNavX.getYaw() - angle;
+    //     double steeringConstant = 0.1;
+    //     double maxSteeringAdjust = 0.3;
+    //     if (error > 180) {
+    //         error =- 360;
+    //     }
+    //     if (error < -180) {
+    //         error =+ 360;
+    //     }
+    //     double steeringAdjust = error*steeringConstant;
+    //     if (steeringAdjust > maxSteeringAdjust) {
+    //         steeringAdjust = maxSteeringAdjust;
+    //     }
+    //     if (steeringAdjust < -maxSteeringAdjust) {
+    //         steeringAdjust = -maxSteeringAdjust;
+    //     }
 
-        driveTank((speed - steeringAdjust), (speed + steeringAdjust));
-    }
+    //     driveTank((speed - steeringAdjust), (speed + steeringAdjust));
+    // }
 
     @Override
     public void periodic(){

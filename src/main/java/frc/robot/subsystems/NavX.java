@@ -7,10 +7,9 @@
 
 package frc.robot.subsystems;
 
-import com.kauailabs.navx.frc.AHRS;
-
-import edu.wpi.first.wpilibj.command.Subsystem;
-import frc.robot.Robot;
+import com.studica.frc.AHRS;
+import com.studica.frc.AHRS.NavXComType;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 
 
@@ -18,8 +17,8 @@ import frc.robot.Robot;
 //import edu.wpi.first.wpilibj2.PIDController;
 
 
-
-public class NavX extends Subsystem {
+//Needs the navX2 for this code implementation
+public class NavX extends SubsystemBase {
 	// Put methods for controlling this subsystem
 	// here. Call these from Commands.
     AHRS ahrs;
@@ -28,87 +27,85 @@ public class NavX extends Subsystem {
 
     final static double kCollisionThreshold_DeltaG = 0.5f;
     
-	public void initDefaultCommand() {
-		// Set the default command for a subsystem here.
-        // setDefaultCommand(new MySpecialCommand());
-        // OrientationHistory orientationHistory;
+	public NavX(){
+        ahrs = new AHRS(NavXComType.kMXP_SPI);
     }
 
     public void resetNavx(){
-        Robot.map.ahrs.reset();
+        ahrs.reset();
     }
         
     public double Angle() {
-        return Robot.map.ahrs.getAngle();
+        return ahrs.getAngle();
     }
     
     //this is used for steering
     public float getIMUPitch(){
-        return Robot.map.ahrs.getPitch();
+        return ahrs.getPitch();
     }
 
     public float getYaw(){
-        return Robot.map.ahrs.getYaw();
+        return ahrs.getYaw();
     }
 
     public float getRoll(){
-        return Robot.map.ahrs.getRoll();
+        return ahrs.getRoll();
     }
 
     //Velocities in all three dimensions for the navx
     public double getXVelocity(){
-        Float floatXVelocity = Robot.map.ahrs.getVelocityX();
+        Float floatXVelocity = ahrs.getVelocityX();
         Double doubleXVelocity = (double) floatXVelocity;
         return doubleXVelocity;
     }
 
     public double getYVelocity(){
-        Float floatYVelocity = Robot.map.ahrs.getVelocityY();
+        Float floatYVelocity = ahrs.getVelocityY();
         Double doubleYVelocity = (double) floatYVelocity;
         return doubleYVelocity;
     }
     
     public double getZvelocity(){
-        Float floatZVelocity = Robot.map.ahrs.getVelocityZ();
+        Float floatZVelocity = ahrs.getVelocityZ();
         Double doubleZVelocity = (double) floatZVelocity;
         return doubleZVelocity;
     }
     //resets displacement
     public void resetDisplacement(){
-        Robot.map.ahrs.resetDisplacement();
+        ahrs.resetDisplacement();
     }
 
     //Displacements for all thre dimensions
     public double getXDisplacement(){
-        Float floatXDisplacement = Robot.map.ahrs.getDisplacementX();
+        Float floatXDisplacement = ahrs.getDisplacementX();
         Double doubleXDisplacement = (double) floatXDisplacement;
         return doubleXDisplacement;
     }
 
     public double getYDisplacement(){
-        Float floatYDisplacement = Robot.map.ahrs.getDisplacementY();
+        Float floatYDisplacement = ahrs.getDisplacementY();
         Double doubleYDisplacement = (double) floatYDisplacement;
         return doubleYDisplacement;
     }
 
     public double getZDisplacement(){
-        Float floatZDisplacement = Robot.map.ahrs.getDisplacementZ();
+        Float floatZDisplacement = ahrs.getDisplacementZ();
         Double doubleZDisplacement = (double) floatZDisplacement;
         return doubleZDisplacement;
     }
 //acceleration in all 3 dimensions
     public double getXAcceleration(){
-        Float floatXAcceleration = Robot.map.ahrs.getWorldLinearAccelX();
+        Float floatXAcceleration = ahrs.getWorldLinearAccelX();
         Double doubleXAcceleration = (double) floatXAcceleration;
         return doubleXAcceleration;
     }
     public double getYAcceleration(){
-        Float floatYAcceleration = Robot.map.ahrs.getWorldLinearAccelY();
+        Float floatYAcceleration = ahrs.getWorldLinearAccelY();
         Double doubleYAcceleration = (double) floatYAcceleration;
         return doubleYAcceleration;
     }
     public double getZAcceleration(){
-        Float floatZAcceleration = Robot.map.ahrs.getWorldLinearAccelZ();
+        Float floatZAcceleration = ahrs.getWorldLinearAccelZ();
         Double doubleZAcceleration = (double) floatZAcceleration;
         return doubleZAcceleration;
     }
